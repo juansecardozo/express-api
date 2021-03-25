@@ -1,20 +1,18 @@
 const express = require("express");
+const ValidationError = require("../../errors/ValidationError");
 const router = express.Router();
 const response = require("../../network/response");
 const controller = require("./controller");
 
 router.get("/", (req, res) => {
-    // console.log(req.headers);
-    /* res.header({
-        "custom-header": "Custom value",
-    }); */
+    let userFilter = req.query.user || null;
     controller
-        .getMessages()
+        .getMessages(userFilter)
         .then((messageList) => {
             response.success(req, res, messageList, 200);
         })
         .catch((e) => {
-            if (e instanceof ReferenceError) {
+            if (e instanceof ValidationError) {
                 response.fail(req, res, e.data, 422);
             } else {
                 response.error(req, res, "Unexpected error", e);
@@ -29,7 +27,7 @@ router.post("/", (req, res) => {
             response.success(req, res, message, 201);
         })
         .catch((e) => {
-            if (e instanceof ReferenceError) {
+            if (e instanceof ValidationError) {
                 response.fail(req, res, e.data, 422);
             } else {
                 response.error(req, res, "Unexpected error", e);

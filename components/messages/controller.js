@@ -1,17 +1,19 @@
+const ValidationError = require("../../errors/ValidationError");
 const store = require("./store");
 
 const addMessage = (user, message) => {
     return new Promise((resolve, reject) => {
-        let err = new ReferenceError();
+        let errors = [];
         if (!user) {
             console.error("[messageController] No user");
-            err.data = { user: "User is required" };
-            reject(err);
+            errors.push({ user: "User is required" });
         }
         if (!message) {
             console.error("[messageController] No message");
-            err.data = { message: "Message is required" };
-            reject(err);
+            errors.push({ message: "Message is required" });
+        }
+        if (errors.length) {
+            return reject(new ValidationError(errors));
         }
         const newMessage = {
             user,
@@ -25,9 +27,16 @@ const addMessage = (user, message) => {
     });
 };
 
-const getMessages = () => {
+const getMessages = (userFilter) => {
     return new Promise((resolve, reject) => {
-        resolve(store.list());
+        store
+            .list(userFilter)
+            .then((messageList) => {
+                resolve(messageList);
+            })
+            .catch((e) => {
+                reject(e);
+            });
     });
 };
 
