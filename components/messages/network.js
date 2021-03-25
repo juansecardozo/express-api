@@ -8,15 +8,33 @@ router.get("/", (req, res) => {
     /* res.header({
         "custom-header": "Custom value",
     }); */
-    if (req.query.error == "OK") {
-        response.error(req, res, "Unexpected error", "Error details");
-    } else {
-        response.success(req, res, {});
-    }
+    controller
+        .getMessages()
+        .then((messageList) => {
+            response.success(req, res, messageList, 200);
+        })
+        .catch((e) => {
+            if (e instanceof ReferenceError) {
+                response.fail(req, res, e.data, 422);
+            } else {
+                response.error(req, res, "Unexpected error", e);
+            }
+        });
 });
 
 router.post("/", (req, res) => {
-    response.success(req, res, req.body, 201);
+    controller
+        .addMessage(req.body.user, req.body.message)
+        .then((message) => {
+            response.success(req, res, message, 201);
+        })
+        .catch((e) => {
+            if (e instanceof ReferenceError) {
+                response.fail(req, res, e.data, 422);
+            } else {
+                response.error(req, res, "Unexpected error", e);
+            }
+        });
 });
 
 module.exports = router;
