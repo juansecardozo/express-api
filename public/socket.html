@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+
+    <body>
+        <h1>Socket</h1>
+        <p>Output:</p>
+        <div id="output"></div>
+
+        <script>
+            var socket = io.connect('http://localhost:3000', {
+                forceNew: true,
+            });
+
+            socket.on('message', function (data) {
+                console.log(data);
+                let message = document.createTextNode(JSON.stringify(data));
+                document.getElementById("output").appendChild(message);
+            });
+        </script>
+    </body>
+</html>
