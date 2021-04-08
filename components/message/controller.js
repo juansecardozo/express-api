@@ -1,6 +1,7 @@
 const ValidationError = require("../../errors/ValidationError");
 const store = require("./store");
 const { socket } = require("../../socket");
+const config = require("../../config");
 
 const addMessage = (user, message, chat, file) => {
     return new Promise((resolve, reject) => {
@@ -23,7 +24,7 @@ const addMessage = (user, message, chat, file) => {
 
         let fileUrl = "";
         if (file) {
-            fileUrl = "http://localhost:3000/public/files/" + file.filename;
+            fileUrl = `${config.host}:${config.port}/${config.publicRoute}/files/${file.filename}`;
         }
 
         const newMessage = {

@@ -4,8 +4,9 @@ const router = express.Router({ mergeParams: true });
 const response = require("../../network/response");
 const controller = require("./controller");
 const multer = require("multer");
+const config = require("../../config");
 const upload = multer({
-    dest: "public/files",
+    dest: `public/${config.uploadFolder}/`,
 });
 
 router.get("/", (req, res) => {
