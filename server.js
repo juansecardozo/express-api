@@ -2,14 +2,15 @@ const express = require("express");
 const app = express();
 const server = require("http").Server(app);
 
+require("dotenv").config();
+const config = require("./config");
+
 const cors = require("cors");
 const socket = require("./socket");
 const db = require("./db");
 const router = require("./network/routes");
 
-db(
-    "mongodb+srv://mongo:r5RK08z9oz7bGwW8@example.sxmuc.mongodb.net/example?retryWrites=true&w=majority&authMechanism=SCRAM-SHA-1"
-);
+db(config.dbUrl);
 
 app.use(cors());
 app.use(express.json());
@@ -18,8 +19,8 @@ socket.connect(server);
 
 router(app);
 
-app.use("/app", express.static("public"));
+app.use(config.publicRoute, express.static("public"));
 
-server.listen(3000, () => {
-    console.log("Server started at port 3000");
+server.listen(config.port, () => {
+    console.log(`Server started at ${config.host}:${config.port}`);
 });
